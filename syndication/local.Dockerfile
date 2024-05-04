@@ -1,0 +1,8 @@
+FROM my-node:18
+
+ENV PORT=3000
+
+ENV APP_ENV=local
+ENV SYNDICATION_URL=http://localhost:9002
+ENV SERVICE_URL=http://localhost:9003
+ENV TZ=UTC

@@ -1,0 +1,100 @@
+version: "4"
+services:
+  # PLATFORM
+  platform:
+    build:
+      context: ../platform
+      dockerfile: ../platform/local.Dockerfile
+    container_name: adlink_an_platform
+    profiles:
+      - frontend
+    command: sh -c "yarn install; yarn dev"
+    working_dir: /app
+    volumes:
+      - ../platform:/app
+    ports:
+      - "6002:3000"
+      - 24678:24678
+    networks:
+      - adlink-an-network
+
+  # MONGODB
+  db:
+    image: mongo:latest
+    container_name: adlink_an_db
+    ports:
+      - "27617:27017"
+    profiles:
+      - backend
+    volumes:
+      - ./data/mongodb/configdb:/data/configdb
+      - ./data/mongodb/db:/data/db
+    networks:
+      - adlink-an-network
+
+  # REDIS
+  redis:
+    image: redis:alpine
+    container_name: adlink_an_redis
+    ports:
+      - "6679:6379"
+    profiles:
+      - backend
+    volumes:
+      - ./data/redis:/data
+    networks:
+      - adlink-an-network
+
+  # PLATFORM API
+  platform_api:
+    image: my-php-nginx:8.2
+    container_name: adlink_an_platform_api
+    working_dir: /app
+    ports:
+      - "8080:80"
+    profiles:
+      - backend
+    volumes:
+      - ../platform-api:/app
+    environment:
+      WEB_DOCUMENT_ROOT: /app/public
+    networks:
+      - adlink-an-network
+
+  # SYNDICATION
+  syndication:
+    build:
+      context: ../syndication
+      dockerfile: ../syndication/local.Dockerfile
+    container_name: adlink_an_syndication
+    working_dir: /app
+    command: sh -c "yarn install; yarn dev"
+    ports:
+      - "9002:3000"
+    profiles:
+      - frontend
+    volumes:
+      - ../syndication:/app
+    networks:
+      - adlink-an-network
+
+  # SERVICE
+  service:
+    build:
+      context: ../service
+      dockerfile: ../service/local.Dockerfile
+    container_name: adlink_an_service
+    working_dir: /app
+    command: sh -c "yarn install; yarn dev"
+    ports:
+      - "9003:3000"
+    profiles:
+      - frontend
+    volumes:
+      - ../service:/app
+    networks:
+      - adlink-an-network
+
+networks:
+  adlink-an-network:
+    driver: bridge

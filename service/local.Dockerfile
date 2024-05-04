@@ -1,0 +1,9 @@
+FROM my-node:18
+
+ENV PORT=3000
+
+ENV REDIS_HOST=redis-17348.c325.us-east-1-4.ec2.cloud.redislabs.com
+ENV REDIS_PASSWORD=mq5asHBlgMsEZqDx4HXKv4YtYEltD3Ix
+ENV REDIS_PORT=17348
+ENV REDIS_DB=0
+ENV REDIS_PREFIX=expanive_delivery

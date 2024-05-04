@@ -1,0 +1,27 @@
+name: Deployment
+
+permissions:
+  id-token: write 
+  contents: read  
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        role-to-assume: arn:aws:iam::767397898048:role/adlink-network-prod-github
+        aws-region: ap-southeast-1
+    - name: Git pull
+      run: aws ssm send-command --instance-ids i-08709bcac6c98c552 --document-name "AWS-RunShellScript" --comment "Git pull" --parameters 'commands=["git --git-dir=/data/platform-api/.git --work-tree=/data/platform-api/ pull origin main"]' --output table
+          
+    - name: Deployment
+      run: aws ssm send-command --instance-ids i-08709bcac6c98c552 --document-name "AWS-RunShellScript" --comment "Deploy platform-api" --parameters 'commands=["python3 /data/platform-api/.github/deploy.py \"${{ github.repository }}\" \"${{github.run_id}}\" "]' --output table
+
+    
+    
