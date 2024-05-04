@@ -9,6 +9,10 @@ const studentManagementApi = {
       : "v1/students";
     return httpRequest.get(`${url}`);
   },
+
+  storeStudent(body) {
+    return httpRequest.post("v1/students", body);
+  },
 };
 
 export default studentManagementApi;
