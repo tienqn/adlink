@@ -91,6 +91,9 @@ const Students = Loadable(lazy(() => import("@/features/student-management/stude
 const CreateStudent = Loadable(
   lazy(() => import("@/features/student-management/students/CreateStudent"))
 );
+const EditStudent = Loadable(
+  lazy(() => import("@/features/student-management/students/EditStudent"))
+);
 
 const Router = [
   {
@@ -170,6 +173,11 @@ const Router = [
         path: "/student-management/students/add-new",
         exact: true,
         element: <CreateStudent />,
+      },
+      {
+        path: "/student-management/students/edit/:id",
+        exact: true,
+        element: <EditStudent />,
       },
 
       { path: "*", element: <Navigate to="/auth/404" /> },
